@@ -43,12 +43,15 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Vector3 pos = transform.position;
+        //DEBUGJUMP------------------------
         if (Input.GetKey(KeyCode.R))
         {
+            Vector3 pos = transform.position;
             pos.x = LevelManager.Instance.DebugPosition;
             transform.position = pos;
         }
+        //---------------------------------
+        
         Invoke(LevelManager.Instance.gameMode.ToString(), 0);
     }
 
@@ -78,10 +81,12 @@ public class PlayerController : MonoBehaviour
             if(!fireParticle.isPlaying)
                 fireParticle.Play();
             
+            //if player touches the ground then snap the player's rotation 90 degrees
             Vector3 rot = SpriteObject.transform.eulerAngles;
             rot.z = Mathf.Round(SpriteObject.transform.eulerAngles.z / 90) * 90;
             SpriteObject.transform.eulerAngles = rot;
 
+            
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
             {
                 rb.velocity = Vector2.zero;
@@ -92,11 +97,12 @@ public class PlayerController : MonoBehaviour
         {
             if(fireParticle.isPlaying)
                 fireParticle.Stop();
+            //if the player is not on the ground rotate the player
             SpriteObject.transform.Rotate(Vector3.back * rotationSpeed * Time.deltaTime);
         }
     }
 
-    private void Fly()
+    private void Fly() //changing the gravity scale to give the player flying effect
     {
         if (!fireParticle.isPlaying)
             fireParticle.Play();

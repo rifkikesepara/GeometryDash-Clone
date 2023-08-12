@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour
     private TMP_Text attemptText;
 
     public float movementSpeed;
-    public int attemptCounter = 1;
+    private int attemptCounter = 1;
     public bool died = false;
     public float DebugPosition;
 
