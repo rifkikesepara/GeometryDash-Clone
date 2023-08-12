@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
-using UnityEditor;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -12,13 +11,14 @@ public class CameraController : MonoBehaviour
     private SpriteRenderer backgroundSprite;
     private float _startingPos;
     private float _lengthOfSprite;
-    public CinemachineVirtualCamera gameCam;
+    public CinemachineVirtualCamera[] gameCams;
 
     public float AmountOfParallax;
 
     private void Awake()
     {
         Instance = this;
+        gameCams = GetComponentsInChildren<CinemachineVirtualCamera>();
     }
 
     void Start()
@@ -26,7 +26,6 @@ public class CameraController : MonoBehaviour
         _startingPos = transform.position.x;
         backgroundSprite = GetComponentInChildren<SpriteRenderer>();
         _lengthOfSprite = backgroundSprite.size.x;
-        gameCam = GetComponentInChildren<CinemachineVirtualCamera>();
     }
 
     void Update()
@@ -43,5 +42,24 @@ public class CameraController : MonoBehaviour
         {
             _startingPos += _lengthOfSprite;
         }
+    }
+
+    public void ShakeTheCamera(float duration)
+    {
+        StartCoroutine(Shake(duration));
+    }
+
+    private IEnumerator Shake(float t)
+    {
+        foreach (var cam in gameCams)
+        {
+            cam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.5f;
+        }
+        yield return new WaitForSeconds(t);
+        foreach (var cam in gameCams)
+        {
+            cam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.0f;
+        }
+        
     }
 }
