@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         {
             if(fireParticle.isPlaying)
                 fireParticle.Stop();
-            SpriteObject.transform.Rotate(Vector3.back * rotationSpeed * Time.deltaTime);
+            SpriteObject.transform.Rotate(Vector3.back * rotationSpeed);
         }
     }
 

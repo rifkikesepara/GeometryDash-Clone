@@ -11,7 +11,7 @@ public class CollisionDetection : MonoBehaviour
         switch (col.transform.tag)
         {
             case "Obstacle":
-                CameraController.Instance.ShakeTheCamera(0.3f);
+                CameraController.Instance.ShakeTheCamera(1);
                 LevelManager.Instance.Died(gameObject);
                 break;
         }
