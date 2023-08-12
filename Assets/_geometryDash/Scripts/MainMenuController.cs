@@ -4,15 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 { 
     private PlayableDirector fadingTimeline;
+    public Slider volumeSlider;
 
     private void Start()
     {
+        Time.timeScale = 1;
         fadingTimeline = GetComponentInChildren<PlayableDirector>();
         fadingTimeline.gameObject.SetActive(false);
+
+        volumeSlider.value = PlayerPrefs.GetFloat("_volume");
+    }
+
+    public void Pause(bool pause)
+    {
+        if (pause)
+            Time.timeScale = 0;
+        else
+            Time.timeScale = 1;
     }
 
     public void LoadSceneWrapper(int index)
@@ -20,8 +33,14 @@ public class MainMenuController : MonoBehaviour
         StartCoroutine(LoadScene(index));
     }
 
-    public IEnumerator LoadScene(int index)
+    public void LoadSceneQuick(int index)
     {
+        SceneManager.LoadScene(index);
+    }
+
+    private IEnumerator LoadScene(int index)
+    {
+        Time.timeScale = 1;
         fadingTimeline.gameObject.SetActive(true);
         fadingTimeline.Play();
 
@@ -44,4 +63,9 @@ public class MainMenuController : MonoBehaviour
    {
        Application.Quit();
    }
+
+    public void SetVolumePref()
+    {
+        PlayerPrefs.SetFloat("_volume", volumeSlider.value);
+    }
 }
