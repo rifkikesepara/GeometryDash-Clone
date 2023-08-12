@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        CameraController.Instance._startingPos = transform.position.x;
+        
         SpriteObject = GetComponentInChildren<SpriteRenderer>().gameObject;
         rb = GetComponent<Rigidbody2D>();
         fireParticle = GetComponentInChildren<ParticleSystem>();

@@ -8,10 +8,10 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController Instance;
     
-    private SpriteRenderer backgroundSprite;
-    private float _startingPos;
+    public float _startingPos;
     private float _lengthOfSprite;
     public CinemachineVirtualCamera[] gameCams;
+    public SpriteRenderer backgroundSprite;
 
     public float AmountOfParallax;
 
@@ -25,11 +25,13 @@ public class CameraController : MonoBehaviour
     {
         _startingPos = transform.position.x;
         backgroundSprite = GetComponentInChildren<SpriteRenderer>();
-        _lengthOfSprite = backgroundSprite.size.x;
+        _lengthOfSprite = backgroundSprite.bounds.size.x;
     }
 
     void Update()
     {
+        
+        
         Vector3 Position = transform.position;
         float Temp = Position.x * (1 - AmountOfParallax);
         float Distance = Position.x * AmountOfParallax;
@@ -60,6 +62,5 @@ public class CameraController : MonoBehaviour
         {
             cam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.0f;
         }
-        
     }
 }
