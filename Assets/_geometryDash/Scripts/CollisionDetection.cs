@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CollisionDetection : MonoBehaviour
@@ -9,21 +10,15 @@ public class CollisionDetection : MonoBehaviour
     {
         switch (col.transform.tag)
         {
-            case "Obstacle":LevelManager.Instance.died = true;
-                Destroy(gameObject);
+            case "Obstacle":
+                CameraController.Instance.ShakeTheCamera(1);
+                LevelManager.Instance.Died(gameObject);
                 break;
-            
         }
     }
-
+    
     private void OnTriggerEnter2D(Collider2D col)
     {
-        switch (col.transform.tag)
-        {
-            case "Fly": LevelManager.Instance.gameMode = LevelManager.GameMode.Fly;
-                break;
-            case "Jump": LevelManager.Instance.gameMode = LevelManager.GameMode.Jump;
-                break;
-        }
+        LevelManager.Instance.ChangeTheGameMode(col.transform.tag);
     }
 }

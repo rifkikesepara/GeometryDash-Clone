@@ -19,7 +19,9 @@ public class LevelManager : MonoBehaviour
     public int attemptCounter = 1;
     public bool died = false;
 
+    public GameObject dieParticle;
     public GameObject Player;
+    public GameObject lastDeadObj;
 
     private void Awake()
     {
@@ -34,23 +36,73 @@ public class LevelManager : MonoBehaviour
         {
             if (childObj.CompareTag("Respawn"))
                 spawnPoint = childObj;
+            if (childObj.CompareTag("DeathPos"))
+                lastDeadObj = childObj.gameObject;
         }
 
-        CameraController.Instance.gameCam.Follow =
-            Instantiate(Player, spawnPoint.position, spawnPoint.rotation).transform;
+        Transform player = Instantiate(Player, spawnPoint.position, spawnPoint.rotation).transform;
+        Debug.Log("rifki");
+
+        foreach (var cam in CameraController.Instance.gameCams)
+        {
+            cam.Follow = player;
+        }
     }
 
     private void Update()
     {
         attemptText.text = "Attempt " + attemptCounter;
-        if (died || Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            died = false;
-            attemptCounter++;
-            CameraController.Instance.gameCam.Follow = Instantiate(Player, spawnPoint.position, spawnPoint.rotation).transform;
-            CameraController.Instance.gameCam.GetCinemachineComponent<CinemachineFramingTransposer>().m_DeadZoneWidth = 0.0f;
+            Destroy(PlayerController.Instance.gameObject);
+            Died(null);
         }
     }
+
+    public void Died(GameObject player)
+    {
+        died = true;
+        attemptCounter++;
+        StartCoroutine(Respawn(player.transform.position));
+        lastDeadObj.transform.position = player.transform.position;
+        foreach (var cam in CameraController.Instance.gameCams)
+        {
+            cam.Follow = lastDeadObj.transform;
+        }
+        Destroy(player);
+    }
+
+    private IEnumerator Respawn(Vector3 diePos)
+    {
+        Instantiate(dieParticle, diePos, quaternion.identity);
+        yield return new WaitForSeconds(2);
+
+        ChangeTheGameMode("Jump");
+        
+        Transform player = Instantiate(Player, spawnPoint.position, spawnPoint.rotation).transform;
+        foreach (var cam in CameraController.Instance.gameCams)
+        {
+            cam.Follow = player;
+            if (!cam.transform.CompareTag("Fly"))
+                cam.GetCinemachineComponent<CinemachineFramingTransposer>().m_DeadZoneWidth = 0.0f;
+        }
+
+        died = false;
+    }
+
+    public void ChangeTheGameMode(string mode)
+    {
+        switch (mode)
+        {
+            case "Fly": gameMode = GameMode.Fly;
+                CameraController.Instance.gameCams[1].Priority = 100;
+                break;
+            case "Jump": gameMode = GameMode.Jump;
+                CameraController.Instance.gameCams[1].Priority = -100;
+                break;
+        }
+    }
+
     public enum GameMode
     {
         Jump=0,Fly

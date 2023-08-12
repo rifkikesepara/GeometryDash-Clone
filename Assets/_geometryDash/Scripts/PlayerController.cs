@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using Quaternion = System.Numerics.Quaternion;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,10 +10,10 @@ public class PlayerController : MonoBehaviour
     
     private Rigidbody2D rb;
     private GameObject SpriteObject;
+    private ParticleSystem fireParticle;
 
     public float groundCheckRadius;
     public float jumpSpeed;
-    public float flyForce;
     public float rotationSpeed = 1.5f;
     public LayerMask GroundMask;
     public Transform groundChecker;
@@ -28,16 +27,13 @@ public class PlayerController : MonoBehaviour
     {
         SpriteObject = GetComponentInChildren<SpriteRenderer>().gameObject;
         rb = GetComponent<Rigidbody2D>();
+        fireParticle = GetComponentInChildren<ParticleSystem>();
     }
 
     private void FixedUpdate()
     {
-        Vector3 pos = groundChecker.position;
-        pos.x = transform.position.x;
-        pos.y = transform.position.y - 0.6f;
-        groundChecker.position = pos;
-        
-        MoveForward();
+        if (!LevelManager.Instance.died)
+            MoveForward();
     }
 
     void Update()
@@ -53,23 +49,29 @@ public class PlayerController : MonoBehaviour
 
     private void MoveForward()
     {
+        Vector3 groundCheckerPos = groundChecker.position;
+        groundCheckerPos.x = transform.position.x;
+        groundCheckerPos.y = transform.position.y - 0.6f;
+        groundChecker.position = groundCheckerPos;
+        
         Vector3 pos = gameObject.transform.position;
-        if (!LevelManager.Instance.died)
-        {
-            pos.x += LevelManager.Instance.movementSpeed;
-            gameObject.transform.position = pos;
-        }
+        pos.x += LevelManager.Instance.movementSpeed * Time.deltaTime;
+        gameObject.transform.position = pos;
     }
 
     private void Jump()
     {
+        rb.gravityScale = 10;
         if (onGround())
         {
+            if(!fireParticle.isPlaying)
+                fireParticle.Play();
+            
             Vector3 rot = SpriteObject.transform.eulerAngles;
             rot.z = Mathf.Round(SpriteObject.transform.eulerAngles.z / 90) * 90;
             SpriteObject.transform.eulerAngles = rot;
-            
-            if (Input.GetKey(KeyCode.Space))
+
+            if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
             {
                 rb.velocity = Vector2.zero;
                 rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
@@ -77,17 +79,21 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if(fireParticle.isPlaying)
+                fireParticle.Stop();
             SpriteObject.transform.Rotate(Vector3.back * rotationSpeed);
         }
     }
 
     private void Fly()
     {
-        SpriteObject.transform.rotation = quaternion.Euler(Vector3.zero);
+    if(!fireParticle.isPlaying)
+        fireParticle.Play();
+        SpriteObject.transform.rotation = quaternion.Euler(0, 0, rb.velocity.y / 15);
         rb.gravityScale = 5;
 
-        if (Input.GetKey(KeyCode.Space))
-            rb.AddForce(Vector2.up * flyForce, ForceMode2D.Force);
+        if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
+            rb.gravityScale = -5;
     }
 
     
