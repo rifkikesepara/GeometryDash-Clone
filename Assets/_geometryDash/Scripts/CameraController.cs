@@ -30,13 +30,11 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        
-        
         Vector3 Position = transform.position;
         float Temp = Position.x * (1 - AmountOfParallax);
         float Distance = Position.x * AmountOfParallax;
-        
-        Vector3 NewPosition = new Vector3(_startingPos + Distance, transform.position.y, backgroundSprite.transform.position.z);
+
+        Vector3 NewPosition = new Vector3(_startingPos + Distance, transform.position.y, 20);
 
         backgroundSprite.transform.position = NewPosition;
 

@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Unity.Mathematics;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class PlayerController : MonoBehaviour
 {
@@ -34,12 +37,18 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!LevelManager.Instance.died)
+        if (!LevelManager.Instance.died && LevelManager.Instance.gameMode != LevelManager.GameMode.Finish)
             MoveForward();
     }
 
     void Update()
     {
+        Vector3 pos = transform.position;
+        if (Input.GetKey(KeyCode.R))
+        {
+            pos.x = LevelManager.Instance.DebugPosition;
+            transform.position = pos;
+        }
         Invoke(LevelManager.Instance.gameMode.ToString(), 0);
     }
 
@@ -89,8 +98,8 @@ public class PlayerController : MonoBehaviour
 
     private void Fly()
     {
-    if(!fireParticle.isPlaying)
-        fireParticle.Play();
+        if (!fireParticle.isPlaying)
+            fireParticle.Play();
         SpriteObject.transform.rotation = quaternion.Euler(0, 0, rb.velocity.y / 15);
         rb.gravityScale = 5;
 
@@ -98,5 +107,14 @@ public class PlayerController : MonoBehaviour
             rb.gravityScale = -5;
     }
 
+    private void Finish()
+    {
+        if(fireParticle.isPlaying)
+            fireParticle.Stop();
+
+        MainMenuController.Instance.LoadSceneWrapper(0);
+    }
     
+
+
 }

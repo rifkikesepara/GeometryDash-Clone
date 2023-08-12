@@ -7,9 +7,16 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
-{ 
+{
+    public static MainMenuController Instance;
+    
     private PlayableDirector fadingTimeline;
     public Slider volumeSlider;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {

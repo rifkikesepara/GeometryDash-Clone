@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour
     public float movementSpeed;
     public int attemptCounter = 1;
     public bool died = false;
+    public float DebugPosition;
 
     public GameObject dieParticle;
     public GameObject Player;
@@ -52,11 +53,6 @@ public class LevelManager : MonoBehaviour
     private void Update()
     {
         attemptText.text = "Attempt " + attemptCounter;
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Destroy(PlayerController.Instance.gameObject);
-            Died(null);
-        }
     }
 
     public void Died(GameObject player)
@@ -100,12 +96,14 @@ public class LevelManager : MonoBehaviour
             case "Jump": gameMode = GameMode.Jump;
                 CameraController.Instance.gameCams[1].Priority = -100;
                 break;
+            case "Finish": gameMode = GameMode.Finish;
+                break;
         }
     }
 
     public enum GameMode
     {
-        Jump=0,Fly
+        Jump=0,Fly,Finish
     }
 }
 

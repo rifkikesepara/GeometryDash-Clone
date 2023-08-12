@@ -214,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundCheckRadius: 0.05
   jumpSpeed: 20
-  rotationSpeed: 250
+  rotationSpeed: 200
   GroundMask:
     serializedVersion: 2
     m_Bits: 8
