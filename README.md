@@ -2,8 +2,13 @@
 
 Geometry Dash clone that has been made by using Unity Engine
 
-Controls:
+### Controls:
 
 Jump - Left Mouse Button or Space
 
 Debug Jump - R (this takes you right away to the finish line)
+
+### Screenshots
+
+![1](Screenshots/1.png)
+![2](Screenshots/2.png)
